@@ -59,7 +59,11 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 load imgfildata;
-set(handles.axes1,'XTick',[], 'YTick', [])
+set(handles.axes1,'XTick',[], 'YTick', []);
+set(handles.axes2,'XTick',[], 'YTick', []);
+cla(handles.axes2,'reset');
+set(handles.axes2,'visible','off');
+set(handles.text5,'visible','off');
 % UIWAIT makes gui wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
@@ -90,7 +94,7 @@ picture=imread(s);
 picture=imresize(picture,[300 500]);
 axes(handles.axes1);
 imshow(picture);
-%imgray = rgb2gray(im1);
+
 
 
 % --- Executes on button press in pushbutton2.
@@ -98,38 +102,31 @@ function pushbutton2_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+%set(handles.axes2,'visible','off');
 load imgfildata;
 picture=getimage(handles.axes1);
 if size(picture,3)==3
   picture=rgb2gray(picture);
 end
-% se=strel('rectangle',[5,5]);
-% a=imerode(picture,se);
-% figure,imshow(a);
-% b=imdilate(a,se);
-threshold = graythresh(picture);
+
+threshold = graythresh(picture); %Calculate threshold 
 picture =~im2bw(picture,threshold);
 picture = bwareaopen(picture,30);
 imshow(picture)
-%if cc>2000
- %   picture1=bwareaopen(picture,3500);
-%else
-%picture1=bwareaopen(picture,3000);
-%end
+
 picture1=bwareaopen(picture,3500);
 axes(handles.axes1);
 imshow(picture1)
-%figure,imshow(picture1)
+
 picture2=picture-picture1;
-%figure,imshow(picture2)
-axes(handles.axes1);
-imshow(picture2)
-picture2=bwareaopen(picture2,200);
-%figure,imshow(picture2)
 axes(handles.axes1);
 imshow(picture2)
 
-%MARKE VALUES IN GREEN COLOR
+picture2=bwareaopen(picture2,200);
+axes(handles.axes1);
+imshow(picture2)
+
+
 [L,Ne]=bwlabel(picture2);
 propied=regionprops(L,'BoundingBox');
 hold on
@@ -138,8 +135,9 @@ for n=1:size(propied,1)
   rectangle('Position',propied(n).BoundingBox,'EdgeColor','g','LineWidth',2)
 end
 hold off
-
-figure
+axes(handles.axes2);
+set(handles.text5,'visible','on');
+%figure
 final_output=[];
 t=[];
 for n=1:Ne
@@ -169,17 +167,24 @@ end
 
 set(handles.text3,'String',final_output);
 
+cla(handles.axes2,'reset');
+set(handles.axes2,'visible','off');
+set(handles.text5,'visible','off');
 
 % --- Executes on button press in pushbutton3.
 function pushbutton3_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+ 
  cla(handles.axes1,'reset');
  set(handles.text3,'string',' ');
- set(handles.axes1,'XTick',[], 'YTick', [])
-
+ set(handles.axes1,'XTick',[], 'YTick', []);
+ 
+ %cla(handles.axes2,'reset');
+ %set(handles.axes2,'visible','off');
+% set(handles.axes2,'XTick',[], 'YTick', []);
+ %set(handles.text5,'visible','off');
 % --- Executes on button press in pushbutton4.
 function pushbutton4_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton4 (see GCBO)
