@@ -87,6 +87,7 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
 [file,path]=uigetfile({'*.jpg;*.bmp;*.png;*.tif'},'Choose an image');
 s=[path,file];
 picture=imread(s);
@@ -109,22 +110,24 @@ if size(picture,3)==3
   picture=rgb2gray(picture);
 end
 
-threshold = graythresh(picture); %Calculate threshold 
+%Calculate threshold 
+threshold = graythresh(picture); 
+%get black & white image
 picture =~im2bw(picture,threshold);
 picture = bwareaopen(picture,30);
 imshow(picture)
 
+%get background
 picture1=bwareaopen(picture,3500);
-axes(handles.axes1);
-imshow(picture1)
 
+%remove background
 picture2=picture-picture1;
-axes(handles.axes1);
-imshow(picture2)
 
+%show filterd image
 picture2=bwareaopen(picture2,200);
 axes(handles.axes1);
 imshow(picture2)
+
 
 
 [L,Ne]=bwlabel(picture2);
@@ -132,12 +135,12 @@ propied=regionprops(L,'BoundingBox');
 hold on
 pause(1)
 for n=1:size(propied,1)
-  rectangle('Position',propied(n).BoundingBox,'EdgeColor','g','LineWidth',2)
+  rectangle('Position',propied(n).BoundingBox,'EdgeColor','c','LineWidth',2)
 end
 hold off
 axes(handles.axes2);
 set(handles.text5,'visible','on');
-%figure
+
 final_output=[];
 t=[];
 for n=1:Ne
